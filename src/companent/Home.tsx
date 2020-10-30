@@ -7,7 +7,6 @@ import logo from '../logo.png'
 import{SearchOutlined,UserOutlined} from '@ant-design/icons'
 import Content from './content'
 import { useHistory } from 'react-router';
-import market from './content/market';
 const { Header} = Layout;
 const {Option} = Select;
 
