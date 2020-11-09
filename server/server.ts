@@ -26,5 +26,5 @@ app.all('*', (req, res, next) => {
 app.use('/api/user',userApi);
 
 // 监听端口
-app.listen(5000)
-console.log('success listen at port:5000');
+app.listen(3300);
+console.log('success listen at port:3300');

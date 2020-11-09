@@ -1,15 +1,23 @@
 import React, { CSSProperties } from 'react';
-import { Form, Input, Button} from 'antd';
+import { Form, Input, Button,message} from 'antd';
 import { UserOutlined, LockOutlined ,MailOutlined } from '@ant-design/icons';
 import axios, { AxiosResponse } from 'axios'
+import { useHistory } from 'react-router';
 const Register:React.FC =()=>{
+    let history = useHistory();
     async function onFinish(value:any) {
-        const result:AxiosResponse = await axios.post("http://localhost:5000/api/user/addUser",{
+        const result:AxiosResponse = await axios.post("/api/user/addUser",{
             username:value.username,
             password:value.password,
             email:value.email
         });
         console.log(result);
+        if(result.statusText==="OK"){
+            message.success('注册成功!');
+            history.push('/Content/login')
+        }else{
+            message.error('注册失败，请检查网络后再试!')
+        }
     }
 
     return(

@@ -23,6 +23,7 @@ router.post('/addUser',(req,res)=>{
     conn.query(sql,[params.username,params.password,params.email,"user",true],function(err,result){
         if (err) {
             console.log(err);
+            res.send(err);
         }
         if (result) {
             jsonWrite(res, result);
@@ -30,6 +31,20 @@ router.post('/addUser',(req,res)=>{
 
     })
 
+
+});
+router.post('/findUser',(req,res)=>{
+    let params = req.body;
+    let sql ='select * from userTable where username="'+params.username+'" and password="'+params.password+'"';
+    conn.query(sql,function(err,result){
+        if (err) {
+            console.log(err);
+            res.send(err);
+        }
+        if (result) {
+            jsonWrite(res, result);
+        }
+    })
 
 })
 

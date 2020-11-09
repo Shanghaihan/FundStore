@@ -1,12 +1,29 @@
 import React,{CSSProperties} from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox,message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import axios, { AxiosResponse } from 'axios'
+import { useHistory } from 'react-router';
 const Login:React.FC=()=>{
-    const onFinish = (values:String) => {
-        console.log('Received values of form: ', values);
+    let history = useHistory();
+    async function onFinish(value:any) {
+        const result:AxiosResponse = await axios.post("/api/user/findUser",{
+            username:value.username,
+            password:value.password,
+        });
+        console.log(result);
+        if(result.statusText==="OK"){
+            if(result.data.length>0){
+                message.success('登录成功!');
+            // history.push('/Content/login')
+            }else{
+                message.error('用户名或密码错误!');
+                value=[];
+            }
+        }else{
+            message.error('登录失败!请检查您的网络')
+        }
     }
     return(
-
         <Form initialValues={{ remember: true }} onFinish={onFinish} style={loginFormStyle}>
             <Form.Item style={{textAlign:'center'}}>
                 <h1>Welcome</h1>
