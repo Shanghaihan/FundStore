@@ -15,6 +15,8 @@ const Login:React.FC=()=>{
             if(result.data.length>0){
                 message.success('登录成功!');
             // history.push('/Content/login')
+                window.sessionStorage.setItem("user", JSON.stringify(result.data[0]));
+                history.push('/')
             }else{
                 message.error('用户名或密码错误!');
                 value=[];

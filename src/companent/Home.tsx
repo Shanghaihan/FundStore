@@ -11,7 +11,8 @@ const { Header} = Layout;
 const {Option} = Select;
 
 const Home :React.FC = ()=>{
-
+    let user:string = eval("("+window.sessionStorage.getItem('user') as string+")").username;
+    console.log(user);
     let history = useHistory();
     const [state,setState] = useState("home");
     const handleChangeState =(e:any)=>{
@@ -58,11 +59,14 @@ const Home :React.FC = ()=>{
                                     <Option value="4.01">4.01</Option>
                                 </Select>
                             </div>
-                            <div style={{marginLeft:'10px'}} onClick={()=>{history.push("/Content/login")}}>
+                            <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'inline':'none'}} onClick={()=>{history.push("/Content/login")}}>
                                 <Button size="small">&nbsp;登&nbsp;&nbsp;录&nbsp;</Button>
                             </div>
-                            <div style={{marginLeft:'10px'}}>
+                            <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'inline':'none'}}>
                                 <Button size="small" onClick={()=>{history.push("/Content/register")}}>&nbsp;注&nbsp;&nbsp;册&nbsp;</Button>
+                            </div>
+                            <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'none':'inline'}}>
+                                {user}
                             </div>
                             <a  href=" " style={{color:'black',marginLeft:'10px'}}>
                                 <UserOutlined/>

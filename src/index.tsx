@@ -13,6 +13,6 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-axios.defaults.baseURL="http://47.99.223.227:3300";
+axios.defaults.baseURL="http://localhost:3300";
 //http://47.99.223.227:3300
 //http://localhost:3300
