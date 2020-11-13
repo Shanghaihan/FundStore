@@ -1,18 +1,18 @@
 import React, { CSSProperties, useState } from 'react';
-import { Layout ,Input ,Select, Button} from 'antd';
+import { Layout ,Input ,Select, Button, message,Modal} from 'antd';
 import { Row, Col } from 'antd';
 import { Menu } from 'antd';
 import bg from '../bg.png'
 import logo from '../logo.png'
-import{SearchOutlined,UserOutlined} from '@ant-design/icons'
+import{AlertOutlined, AreaChartOutlined, PieChartOutlined, SearchOutlined,UserOutlined} from '@ant-design/icons'
 import Content from './content'
 import { useHistory } from 'react-router';
+import Login from './content/Login';
 const { Header} = Layout;
 const {Option} = Select;
 
 const Home :React.FC = ()=>{
-    let user:string = eval("("+window.sessionStorage.getItem('user') as string+")").username;
-    console.log(user);
+    let user:any= eval("("+window.sessionStorage.getItem('user') as string+")");
     let history = useHistory();
     const [state,setState] = useState("home");
     const handleChangeState =(e:any)=>{
@@ -40,14 +40,14 @@ const Home :React.FC = ()=>{
                     </Col>
                     <Col span={14} style={{flex:'1 1 auto'}} offset={2}>            
                         <Row justify="end">  
-                            <Menu  onClick={handleChangeState} selectedKeys={[state]} mode="horizontal"  direction="ltr" style={{width:'30%',height:'98%',backgroundColor:'rgba(255,255,255,0)',marginLeft:'0px',borderBottom:'none'}}> 
-                                <Menu.Item key="market">
+                            <Menu  onClick={handleChangeState} selectedKeys={[state]} mode="horizontal"  direction="ltr" style={{width:'36%',height:'98%',backgroundColor:'rgba(255,255,255,0)',marginLeft:'0px',borderBottom:'none'}}> 
+                                <Menu.Item key="market" icon={<AreaChartOutlined/>}>
                                     市场
                                 </Menu.Item>
-                                <Menu.Item key="optional">
+                                <Menu.Item key="optional" icon={<PieChartOutlined/>}>
                                     自选
                                 </Menu.Item>
-                                <Menu.Item key="hold">
+                                <Menu.Item key="hold" icon={<AlertOutlined/>}>
                                     持有
                                 </Menu.Item>
                             </Menu>
@@ -59,18 +59,16 @@ const Home :React.FC = ()=>{
                                     <Option value="4.01">4.01</Option>
                                 </Select>
                             </div>
-                            <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'inline':'none'}} onClick={()=>{history.push("/Content/login")}}>
-                                <Button size="small">&nbsp;登&nbsp;&nbsp;录&nbsp;</Button>
-                            </div>
-                            <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'inline':'none'}}>
-                                <Button size="small" onClick={()=>{history.push("/Content/register")}}>&nbsp;注&nbsp;&nbsp;册&nbsp;</Button>
-                            </div>
+                           <Login></Login>
                             <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'none':'inline'}}>
-                                {user}
+                                {user==null?"":user.username}
                             </div>
                             <a  href=" " style={{color:'black',marginLeft:'10px'}}>
                                 <UserOutlined/>
                             </a>
+                            <div style={{marginLeft:'10px',display:window.sessionStorage.getItem('user')==null?'none':'inline'}}>
+                                <Button size="small" onClick={()=>{window.sessionStorage.clear();message.success('退出成功!');history.push('/')}}>&nbsp;退&nbsp;&nbsp;出&nbsp;</Button>
+                            </div>
                         </Row>
                        
                     </Col>
