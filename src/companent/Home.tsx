@@ -74,7 +74,7 @@ const Home :React.FC = ()=>{
                     </Col>
                 </Row>
             </Header>
-            <div style={{height:'95%',textAlign:'center',paddingTop:'20px'}}>
+            <div style={{height:'155%',paddingTop:'20px',width:'75%',margin:'0 auto'}}>
                 <Content></Content>
             </div>
         </div>
@@ -82,7 +82,7 @@ const Home :React.FC = ()=>{
 
 }
 const CContent:CSSProperties={
-    height:'100%',
+    height:'160%',
     backgroundImage:'url('+bg+')',
     backgroundRepeat: 'no-repeat',
     backgroundSize:'100% 100%',
