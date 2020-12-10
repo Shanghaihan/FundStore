@@ -59,9 +59,6 @@ const home:React.FC=()=>{
                             </div>
                             </a>
                         </Col>
-
-
-
                         </Row>
                     </Col>
 

@@ -1,10 +1,12 @@
 import React,{CSSProperties,useState} from 'react';
-import { Form, Input, Button, Checkbox,message ,Modal,Menu} from 'antd';
+import { Form, Input, Button, Checkbox,message ,Modal,Menu,Spin} from 'antd';
 import { UserOutlined, LockOutlined,MailOutlined } from '@ant-design/icons';
 import axios, { AxiosResponse } from 'axios'
 import { useHistory } from 'react-router';
 const Login:React.FC=()=>{
+
     let history = useHistory();
+    //设置panel状态
     const [panelState,setPanelState] =useState(false);
     const [loginForm] = Form.useForm();
     const [registerForm] = Form.useForm();
@@ -15,45 +17,61 @@ const Login:React.FC=()=>{
     const handleChangeLRState=(e:any)=>{
         setLRState(e.key)
     };
-    
-    async function onFinishLogin(value:any) {
-        const result:AxiosResponse = await axios.post("/api/user/findUser",{
-            username:value.username,
-            password:value.password,
-        });
-        console.log(result);
-        if(result.statusText==="OK"){
-            if(result.data.length>0){
+    const useLogin = ()=>{
+        const [pending,setPending] = useState(false);
+        //数据请求
+        const [result,setResult] = useState(false);
+        const load = async (value:any) =>{
+            setPending(true);
+            setResult(false);
+            const res:AxiosResponse = await axios.post("/api/user/findUser",{
+                username:value.username,
+                password:value.password,
+            });
+            if(res.data.length>0){
+                setResult(true);
                 message.success('登录成功!');
-            // history.push('/Content/login')
-                window.sessionStorage.setItem("user", JSON.stringify(result.data[0]));
+                window.sessionStorage.setItem("user", JSON.stringify(res.data[0]));
                 loginForm.resetFields();
                 history.push('/');
                 handleChangeState(false)
             }else{
+                setResult(false);
                 message.error('用户名或密码错误!');
                 loginForm.resetFields();
             }
-        }else{
-            message.error('登录失败!请检查您的网络')
+            setPending(false);
         }
+        return{result,pending,load};
     }
-    async function onFinishRegister(value:any) {
-        const result:AxiosResponse = await axios.post("/api/user/addUser",{
-            username:value.username,
-            password:value.password,
-            email:value.email
-        });
-        console.log(result);
-        if(result.statusText==="OK"){
-            message.success('注册成功!');
-            registerForm.resetFields();
-            setLRState('login');
-        }else{
-            message.error('注册失败，请检查网络后再试!')
+    const Login = useLogin();
+    const useRegister = ()=>{
+        const [pending,setPending] = useState(false);
+        //数据请求
+        const [result,setResult] = useState(false);
+        const load = async (value:any) =>{
+            setPending(true);
+            setResult(false);
+            const res:AxiosResponse = await axios.post("/api/user/addUser",{
+                username:value.username,
+                password:value.password,
+                email:value.email
+            });
+            console.log(res);
+            if(res.statusText==="OK"){
+                setResult(true);
+                message.success('注册成功!');
+                registerForm.resetFields();
+                setLRState('login');
+            }else{
+                setResult(false);
+                message.error('注册失败，请检查网络后再试!')
+            }
+            setPending(false);
         }
+        return {result,pending,load}
     }
-   
+    const Register = useRegister();
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 30 },
@@ -85,7 +103,7 @@ const Login:React.FC=()=>{
                 forceRender
                 >
                     <div  style={{padding:'0 100px 0 100px'}}>
-                        <Form form={loginForm} initialValues={{ remember: true }} onFinish={onFinishLogin} style={{ width:'50%',margin:'0 auto',display:LRState==='login'?"inline":"none"}}>
+                        <Form form={loginForm} initialValues={{ remember: true }}  onFinish={Login.load}  style={{ width:'50%',margin:'0 auto',display:LRState==='login'?"inline":"none"}}>
                             <Form.Item style={{textAlign:'center'}}>
                                 <h1>Welcome</h1>
                             </Form.Item>
@@ -103,14 +121,14 @@ const Login:React.FC=()=>{
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" style={{width:'100%',margin:'1rem  0 0 0'}}>
-                                登录
+                                    {Login.pending?'登录中...':'登录'}
                                 </Button>
                                      {/* <a href=" ">马上注册!</a> */}
                             </Form.Item>
                         </Form>
                     </div>
                     <div  style={{padding:'0 100px 0 50px'}}>
-                        <Form  form={registerForm} {...layout} initialValues={{ remember: true }} onFinish={onFinishRegister} style={{ width:'20rm',margin:'0 auto',display:LRState==='register'?"inline":"none"}}>
+                        <Form  form={registerForm} {...layout} initialValues={{ remember: true }} onFinish={Register.load} style={{ width:'20rm',margin:'0 auto',display:LRState==='register'?"inline":"none"}}>
                             <Form.Item name="username" rules={[{ required: true, message: 'Please input your Username' }]}   label="用户名">
                                 <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" ></Input>
                             </Form.Item>
@@ -126,7 +144,6 @@ const Login:React.FC=()=>{
                                         return Promise.resolve();
                                     }
                                     return Promise.reject("The two passwords that you entered do not match!")
-
                                 }
                             }),
                             ]}>
@@ -136,7 +153,7 @@ const Login:React.FC=()=>{
                                 <Input prefix={<MailOutlined className="site-form-item-icon" />} placeholder="email" type="text"></Input>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" style={{width:'66%',margin:'0rem  0 0 6.8rem'}}>注册</Button>
+                                <Button type="primary" htmlType="submit" style={{width:'66%',margin:'0rem  0 0 6.8rem'}}>{Register.pending?'注册中...':'注册'}</Button>
                             </Form.Item>
                         </Form>
                     </div>

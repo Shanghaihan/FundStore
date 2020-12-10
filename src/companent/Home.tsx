@@ -8,25 +8,37 @@ import{AlertOutlined, AreaChartOutlined, PieChartOutlined, SearchOutlined,UserOu
 import Content from './content'
 import { useHistory } from 'react-router';
 import Login from './content/Login';
+import Progress from './progress';
+import e from 'express';
 const { Header} = Layout;
 const {Option} = Select;
-
 const Home :React.FC = ()=>{
     let user:any= eval("("+window.sessionStorage.getItem('user') as string+")");
     let history = useHistory();
     const [state,setState] = useState("home");
+    const [len,setLen] = useState(0);
+    const [trans,setTrans] = useState('width 500ms , fill 250ms')
     const handleChangeState =(e:any)=>{
-        console.log('click ', e);
-        setState(e.key);
-        history.push("/Content/"+e.key);
+        if(!e.key)
+            e.key = 'home';
+        setTrans('width 500ms , fill 250ms');
+        setLen(1);
+        setTimeout(()=>{
+            setTrans('width 0ms , fill 0ms');
+            setLen(0);
+            setState(e.key);
+            history.push("/Content/"+e.key);
+        },1000)
+    
     };
     return(
         <div style={CContent}>
+            <Progress percent={len} width={1903} height={2} color={'rgb(24, 144, 255)'} trans={trans}/> 
             <Header style={{height:'6%',backgroundColor:'rgba(255,255,255,0)',textAlign:'center',maxWidth:'1920px',width:'80%',margin:'0 auto'}}>
                 <Row  style={{height:'100%',flexFlow:'nowrap',margin:'0 auto'}}  >
                     <Col span={4} style={{flex:'0 0 auto'}}className="gutter-row" >
                         <h2>
-                            <a href="/Home" style={{color:'black'}}> 
+                            <a style={{color:'black'}} onClick={handleChangeState}> 
                                 <img alt=" " src={logo} style={{height:'50px',marginRight:'0px'}}></img>
                                 Goose Wealth
                             </a>
@@ -51,7 +63,7 @@ const Home :React.FC = ()=>{
                                     持有
                                 </Menu.Item>
                             </Menu>
-                            <div style={{marginLeft:'10px'}}>
+                            <div style={{marginLeft:'10px',boxSizing:'border-box'}}>
                                 <Select defaultValue="1.2.1" size="small">
                                     <Option value="1.x">1.x</Option>
                                     <Option value="2.x">2.x</Option>
@@ -74,15 +86,14 @@ const Home :React.FC = ()=>{
                     </Col>
                 </Row>
             </Header>
-            <div style={{height:'155%',paddingTop:'20px',width:'75%',margin:'0 auto'}}>
+            <div style={{height:'70%',paddingTop:'20px',width:'75%',margin:'0 auto'}}>
                 <Content></Content>
             </div>
         </div>
     )
-
 }
 const CContent:CSSProperties={
-    height:'160%',
+    height:'120%',
     backgroundImage:'url('+bg+')',
     backgroundRepeat: 'no-repeat',
     backgroundSize:'100% 100%',
