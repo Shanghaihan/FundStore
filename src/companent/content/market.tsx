@@ -1,16 +1,37 @@
 import { Button } from 'antd';
 import Title from 'antd/lib/typography/Title';
-import { type } from 'os';
-import React, { CSSProperties, useRef, useState } from 'react';
+import React, { CSSProperties, useEffect, useReducer, useRef, useState, useContext } from 'react';
+import { connect } from 'react-redux';
 import Content from '../content';
-
 import ScrollBank from './Smallcompanent/scrollBank'
-const market:React.FC=()=>{
+import { updateMarketData } from '../../store/action';
+import axios from 'axios';
+import { TagsOutlined } from '@ant-design/icons';
+import DemoPie from './Smallcompanent/PieCharts';
+import DemoLine from './Smallcompanent/LineCharts';
+
+interface  Iprops {
+    updateMarketData:typeof updateMarketData;
+}
+const  Market:React.FC<Iprops>=(props)=>{
+    //获取数据，创建上下文 
+    const [data,setData] = useState(null);
+    
+    useEffect(()=>{
+        const readyData = async()=>{
+            axios.defaults.baseURL="http://localhost:3000";
+            let res = await (await axios.get('../../marketData.json')).data;
+            axios.defaults.baseURL="http://localhost:3300";
+            setData(res);
+        }
+        readyData();
+    },[])
     return(
-        <div>
-            <ScrollBank/>
-            <MarketPanel/>
-        </div>
+            <div>
+                <ScrollBank marketData={data}/>
+                <MarketPanel/>  
+            </div>
+                     
     )
 }
 const MarketPanel:React.FC=()=>{
@@ -149,7 +170,6 @@ const MarketPanel:React.FC=()=>{
         }
 
     ]
-
     return(
         <div style={PanelBox}>
             <PanelItem content={data[0]}/>
@@ -234,6 +254,86 @@ const ItemContent:React.FC<AppProps>=(props)=>{
 
         </div>
     )
+}
+type Cardprops = {
+    data:any
+}
+export const ItemCard:React.FC<Cardprops>=(props)=>{
+    var { data } =props;
+    useEffect(() => {
+        return () => {
+        }
+    }, [])
+    return(
+        <div style={{width:'100%',height:'90%',textAlign:'start',display:'flex'}}>
+            <div style={{width:'45%',height:'90%'}}>
+                <div style={{fontSize:'18px',
+                    fontWeight:'normal',
+                    margin:'10px',
+                    color:'black',
+                    display:'flex'
+                    }}>
+                    { data===null?'':data.name}
+                </div>
+                <div style={{width:'100%',
+                    height:'15%',
+                    // backgroundColor:'green',
+                    margin:'10px',
+                    wordBreak:'normal',
+                    wordWrap:'break-word',
+                    color:'gray',
+                    borderBottom:'1px solid grey'}}>
+                <TagsOutlined />
+                {data===null?'':data.text}
+                </div>
+                <div style={{display:'flex',
+                    width:'100%',
+                    margin:'0 10px 10px 10px',
+                    height:'20%',
+                    borderBottom:'1px solid grey'
+                    }}>
+                    <div>
+                        <div style={{color:'gray',margin:'10px'}}>近一年收益率</div>
+                        <div style={{color:'red',margin:'10px',fontSize:'24px'}}>{data===null?'':data.lirun}</div>
+                    </div>
+                    <div style={{transform:'translateX(100px)'}}>
+                        <div style={{color:'gray',margin:'10px'}}>产品期限</div>
+                        <div style={{margin:'10px',fontSize:'24px'}}>{data===null?'':data.period}</div>
+                    </div>
+                
+                </div> 
+                <div id="container" style={{width:'100%',height:'55%',margin:'10px'}}>
+                    <DemoPie data={data===null?'':data.pieData}/>
+                </div>
+            </div>
+            <div style={{width:'50%',height:'90%',margin:'10px 0 0 20px'}}>
+                <div style={{fontSize:'18px',margin:'0 0 10px 0'}}>业绩走势</div>
+                <div style={{width:'100%',height:'80%'}}>
+                    <DemoLine/>
+                </div>
+                <div style={{textAlign:'center'}}>
+                    <div style={{fontSize:'14px',backgroundColor:'rgba(128,128,128,0.1)'}}>开放买入，开放卖出</div>
+                    <Button type="primary" style={{width:'150px',transform:'translateX(107%)',margin:'10px'}}>买入</Button>
+                </div>
+            </div>
+        </div>
+    )
+}
+interface coverProps{
+    vis?:boolean
+} 
+
+export const CoverPanel:React.FC<coverProps>=(props)=>{
+    return(
+        <div style={{
+            position:'absolute',
+            width:'1920px',
+            height:'2500px',
+            backgroundColor:'grey',
+            }}  
+        >
+        </div>
+    )
 
 }
 const PanelBox:CSSProperties={
@@ -272,4 +372,6 @@ const button_active:CSSProperties={
     margin:'0 10px 0 0',
 
 }
-export default market;
+
+
+export default  connect(  updateMarketData )(Market);

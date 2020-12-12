@@ -1,9 +1,21 @@
 import e from 'express';
-import React, { CSSProperties, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, useEffect, useRef, useState, useContext } from 'react';
 import { clearInterval, clearTimeout } from 'timers';
 import '../../../scrollBank.css'
-const ScrollBank:React.FC = ()=>{
+import { connect } from  'react-redux'
+import { addCount, updateMarketData } from '../../../store/action';
+import { AppState } from '../../../store/index';
+import axios from 'axios';
+import { ItemCard } from '../market';
 
+type APPprops = {
+    marketData:any
+}
+
+const ScrollBank:React.FC<APPprops> = (props)=>{  
+    //获取数据，以此来展示market信息面板传值
+    var { marketData } = props;
+    const [data,setData] = useState(null);
     const root = React.useRef<HTMLDivElement>(null);
     const ulControl = React.useRef<HTMLUListElement>(null);
     const [index,setIndex] = useState(0);
@@ -13,7 +25,7 @@ const ScrollBank:React.FC = ()=>{
     const handleLeft = ()=>{
         if(index>0){
             setIndex(index-1);      
-        }
+        };
     }
     const handleRight = ()=>{
         if(index<3){
@@ -39,16 +51,56 @@ const ScrollBank:React.FC = ()=>{
             <div className="rightNode" onClick={handleRight}></div>
             <div style={Scroll_list} ref={root} >
                 <div className='Scroll_item_active'>
-                    <p>0</p>
+                    <div style={{
+                        textAlign:'center',
+                        height:'10%',
+                        width:'100%',
+                        backgroundImage:'linear-gradient(rgba(24, 144, 255,0.5),white)',
+                        color:'white',
+                        fontSize:'20px'
+                    }}>
+                    产&nbsp;品&nbsp;推&nbsp;荐
+                    </div>
+                    <ItemCard data={marketData===null?null:marketData['汇添富理财加']}></ItemCard>
                 </div>
                 <div className='Scroll_item' >
-                    <p>1</p>
+                    <div style={{
+                        textAlign:'center',
+                        height:'10%',
+                        width:'100%',
+                        backgroundImage:'linear-gradient(rgba(24, 144, 255,0.5),white)',
+                        color:'white',
+                        fontSize:'20px'
+                    }}>
+                    产&nbsp;品&nbsp;推&nbsp;荐
+                    </div>
+                    <ItemCard data={marketData===null?null:marketData['博时货币佳']}></ItemCard>
                 </div>
                 <div className='Scroll_item' >
-                    <p>2</p>
+                    <div style={{
+                        textAlign:'center',
+                        height:'10%',
+                        width:'100%',
+                        backgroundImage:'linear-gradient(rgba(24, 144, 255,0.5),white)',
+                        color:'white',
+                        fontSize:'20px'
+                    }}>
+                    产&nbsp;品&nbsp;推&nbsp;荐
+                    </div>
+                    <ItemCard data={marketData===null?null:marketData['景顺长城基金']}></ItemCard>
                 </div>
                 <div className='Scroll_item' >
-                    <p>3</p>
+                    <div style={{
+                        textAlign:'center',
+                        height:'10%',
+                        width:'100%',
+                        backgroundImage:'linear-gradient(rgba(24, 144, 255,0.5),white)',
+                        color:'white',
+                        fontSize:'20px'
+                    }}>
+                    产&nbsp;品&nbsp;推&nbsp;荐
+                    </div>
+                    <ItemCard data={marketData===null?null:marketData['招商基金财富']}></ItemCard>
                 </div>
             </div>
             <ul ref={ulControl} onClick={handleClickchange} className='ul_list'>
@@ -69,7 +121,6 @@ const ScrollBank:React.FC = ()=>{
         </div>
     )
 }
-
 const Scroll:CSSProperties={
     width:'1000px',
     height:'600px',
@@ -84,4 +135,9 @@ const Scroll_list:CSSProperties={
     display:'flex',
     transition:'all 1s',
 }
-export default ScrollBank;
+
+ 
+ export default  ScrollBank;
+
+
+

@@ -3,6 +3,7 @@ import { Router} from 'react-router';
 import './App.css'
 import {createBrowserHistory} from 'history'
 import Routes from './routes'
+import { CoverPanel } from './companent/content/market';
 export const history = createBrowserHistory()
 const App:React.FC =()=>{
     return(
